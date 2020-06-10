@@ -23,7 +23,7 @@ def readfile(filename):
     high = nums[:,4]
     low = nums[:,5]
     return date, closeIndex, high, low
-date, hisClose, hisHigh, hisLow= readfile("./HSIreal.csv")
+date, hisClose, hisHigh, hisLow= readfile("./database/HSIreal.csv")
 hisClose = list(reversed(hisClose))
 hisHigh = list(reversed(hisHigh))
 hisLow = list(reversed(hisLow))
