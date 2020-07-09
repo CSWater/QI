@@ -25,8 +25,8 @@ class GridStrategy:
       high_price = float(his_close[0])
       drop_base = self.__const_base
       self._step = 0.05
-      if end_date > etf.getHistoryLength():
-        end_date = etf.getHistoryLength()
+      #if end_date > etf.getHistoryLength():
+      end_date = etf.getHistoryLength()
       for date_id in range(start_date, end_date, 1):
           t_type = 'N'
           t_shares = -1
@@ -37,7 +37,7 @@ class GridStrategy:
               t_type = 'S'
               t_price = buy_record[0] * (1 + self.__step)
               t_shares = buy_record[1]
-              #print("sell,", t_shares)
+              print("sell,", t_shares, ",", t_price)
               drop_base = self.__const_base
               result.addTransaction(t_type, date_id, t_price, t_shares, t_price * 0.05)
               high_price = t_price
@@ -50,7 +50,7 @@ class GridStrategy:
                   t_shares = int(self.__per_share / t_price / 100) * 100
                   result.addTransaction(t_type, date_id, t_price, t_shares, 0)
                   result.getInProgressTransaction().sort(reverse=1)
-                  #print("buy,", t_shares)       
+                  print("buy,", t_shares, ",", t_price)     
                   drop_base += self._step
           #update high price
           if drop_rate <= self.__const_base + 0.001 and float(his_close[date_id - 1]) > float(his_close[date_id]):

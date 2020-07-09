@@ -26,7 +26,8 @@ class ETF:
 class StrategyResult:
   __transaction_history = [] #record all the transaction history
   __in_process_transaction = [] #record buy actions that are not sold 
-  __strategy_state = [] #record account state everyday, each item is a tuple of (hold_cost, hold_shares, cur_price)
+  __strategy_state = [] # tuple of (hold_cost, hold_shares, cur_price, investment)
+  __max_investment = -1
   
   #def __init__(self):
   #t_type means transaction type, t for transaction
@@ -39,27 +40,37 @@ class StrategyResult:
   def updateProfit(self, t_type, t_price, cur_price, t_shares):
     hold_cost = -1
     hold_shares = -1
+    investment = -1
     if t_type == 'B':
         pre_hold_shares = self.__strategy_state[-1][1]
         pre_hold_cost = self.__strategy_state[-1][0]
+        pre_investment = self.__strategy_state[-1][3]
         hold_shares = pre_hold_shares + t_shares
         hold_cost = (pre_hold_cost * pre_hold_shares + t_price * t_shares) / (hold_shares + t_shares)
+        investment = pre_investment + t_price * t_shares
+        self.__max_investment = max(self.__max_investment, investment)
+        print(investment)
     elif t_type == 'S':
         #use transaction profit to reduce hold cost
         pre_hold_cost = self.__strategy_state[-1][0]
         pre_hold_shares = self.__strategy_state[-1][1]
+        pre_investment = self.__strategy_state[-1][3]
         t_earnings = t_shares * (t_price - pre_hold_cost)
         hold_shares = pre_hold_shares - t_shares
         hold_cost = hold_cost - t_earnings / hold_shares
+        investment = pre_investment - t_shares * t_price * 0.95
+        print(investment)
     else:
         #buy 100 shares at the day start investing
         if len(self.__strategy_state) == 0:  #first day
           hold_cost = cur_price
           hold_shares = 100
+          investment += hold_cost * hold_shares
         else:
           hold_cost = self.__strategy_state[-1][0]
           hold_shares = self.__strategy_state[-1][1]
-    self.__strategy_state.append((hold_cost, hold_shares, cur_price))
+          investment = self.__strategy_state[-1][3]
+    self.__strategy_state.append((hold_cost, hold_shares, cur_price, investment))
 
   def getTransactionHistory(self):
     return self.__transaction_history
@@ -77,6 +88,8 @@ class StrategyResult:
     return self.__strategy_state
   def getInProgressTransaction(self):
     return self.__in_process_transaction
+  def getMaxInvestment(self):
+    return self.__max_investment
   def getSellHistory(self):
     sell_history = []
     for tranc in self.__transaction_history:
