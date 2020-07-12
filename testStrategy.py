@@ -6,7 +6,7 @@ import datatypes as dt
 import FileIO as fio
 
 etf_513030 = dt.ETF("./database/513030.csv")
-grid_strategy = st.GridStrategy(2000, 1.2, 0.05, 0.05)
+grid_strategy = st.GridStrategy(2000, 1.00, 0.05, 0.05)
 res_513030 = grid_strategy.executeStrategy(etf_513030)
 account = res_513030.getLatestAccount()
 max_investment = res_513030.getMaxInvestment()
@@ -24,9 +24,11 @@ print("shares: ", shares)
 print("current price: ", cur_price)
 print("investment: ", investment)
 print("max investment: ", max_investment)
-print("profit: ", max_investment)
+print("profit: ", profit)
 print("max loss rate: ", max_loss_rate)
 print("rise rate(price/cost): ", profit_rate)
 print("profit rate(profit / max_investment): ", profit / max_investment)
 
-# fio.reverseFile("./database/513030.csv")
+# #fio.convertToStandardFile("./database/513030-test.csv")
+# record=[20200806,  1.067,  1.056,  1.068, 1.052,  '74.99M', '1.33%']
+# fio.appendRecord('./database/513030-test.csv', record)
