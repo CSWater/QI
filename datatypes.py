@@ -1,4 +1,48 @@
 import FileIO as fio
+""" class DayData:
+  def close_price() """
+class ObjectDayData:
+  def __init__(self):
+    self.close_price :float= 0
+    self.open_price :float= 0
+    self.high_price :float= 0
+    self.low_price :float= 0
+    self.trading_volume :float= 0
+    self.rise_rate :float= 0
+    self.date :str = 19901201
+  def __init__(self, cp:float, op:float, hp:float, lp:float, tv:float, rr:float, date:str):
+    self.close_price :float= cp
+    self.open_price :float= op
+    self.high_price :float= hp
+    self.low_price :float= lp
+    self.trading_volume :float= tv
+    self.rise_rate :float= rr
+    self.date :str= date
+  
+class ETFObject:
+  __index = 0
+  __length = 0
+  def __init__(self, id:str):
+    self.id = id
+    self.data :list[ObjectDayData]= []
+  def __init__(self, id:str, etf:list[ObjectDayData]):
+    self.id = id
+    self.data :list[ObjectDayData]= etf
+  def __getitem__(self, k):
+    return self.data[k]
+  def __setitem__(self, k, v):
+    self.data[k] = v
+  def __iter__(self):
+    return self 
+  def __next__(self):
+    if self.__index < self.__length:
+      ret = self.data[self.__index]
+      self.__index += 1
+      return ret
+    else:
+      raise StopIteration 
+
+      
 class ETF:
   __close_price = []
   __open_price = []
@@ -144,16 +188,16 @@ class Transaction:
   #init function
   def __init__(self) -> None:
     self.investment_id = '000000'
-    self.t_type = 'N'        
+    self.t_type :str= 'N'        
     self.t_date = 19901201   
-    self.t_price = 0.0       
-    self.t_share = 0.0  
-  def __init__(self, investment_id, t_type, t_date, t_price, t_share) -> None:
+    self.t_price :float= 0.0       
+    self.t_share :float= 0.0  
+  def __init__(self, investment_id:str, t_type:str, t_date:str, t_price:float, t_share:float) -> None:
     self.investment_id = investment_id    #投资品种
-    self.t_type = t_type        #transaction type, B, S, N for buy, sell, undefine
+    self.t_type :str= t_type        #transaction type, B, S, N for buy, sell, undefine
     self.t_date = t_date        #transaction date
-    self.t_price = t_price      #trade price of the transaction
-    self.t_share = t_share      #trade shares of the transaction
+    self.t_price :float= t_price      #trade price of the transaction
+    self.t_share :float= t_share      #trade shares of the transaction
   #set functions
   def set_date(self, t_date):
     self.t_date = t_date
@@ -172,7 +216,52 @@ class Transaction:
     return self.t_price
   def get_share(self):
     return self.t_share
+  def isBuy(self):
+    return self.t_type == 'B'
+  def isSell(self):
+    return self.t_type == 'S'
   
+#Transaction history
+class TransactionHistory:
+  def __init__(self):
+    self.history: list[Transaction] = []
+  def __init__(self, trans_history: list[Transaction]):
+    self.history: list[Transaction] = trans_history
+  
+  #return the history length
+  def len(self):
+    return len(self.history)
+  #return the last transaction
+  def top(self):
+    return self.history[-1]
+  #add one transaction, transaction history would never delete an item
+  #since history can not be changed
+  def add(self, trans:Transaction):
+    self.history.append(trans)
+  #override []
+  def __getitem__(self, k):
+    return self.history[k]
+  def __setitem__(self, k, v):
+    self.history[k] = v
+  #return all the buy transactions
+  def getAllBuys(self) -> list[Transaction]:
+    buys :list[Transaction]= []
+    for trans in self.history:
+      if trans.isBuy():
+        buys.append(trans)
+    return buys
+  #return all the sell transactions
+  def getAllSells(self) -> list[Transaction]:
+    sells :list[Transaction]= []
+    for trans in self.history:
+      if trans.isSell():
+        sells.append(trans)
+    return sells
+  #return interval transactions
+  #todo
+    
+    
+
 #一个投资实例由交易品种，交易策略，交易历史构成
 #是在一个给定品种，给定区间上运行给定策略的结果
 class InvestmentCase:
