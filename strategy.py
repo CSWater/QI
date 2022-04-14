@@ -63,6 +63,13 @@ class GridStrategy1:
       return result
 
 
+class GridStrategy2:
+    #strategy constant for each instance
+  __danger_thredhold = -1
+  __const_base = -1
+  __step = -1
+  __per_share = -1
+
 #interval_end = len(hisClose)
 #interval_start = interval_end - 1219
 #sell_point, buy_point, sell_date, buy_date = searchSeg(interval_start, interval_end, hisClose)
