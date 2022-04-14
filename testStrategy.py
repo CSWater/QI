@@ -5,8 +5,8 @@ import strategy as st
 import datatypes as dt
 import FileIO as fio
 
-etf_513030 = dt.ETF("./database/513030.csv")
-grid_strategy = st.GridStrategy(2000, 1.00, 0.05, 0.05)
+etf_513030 = dt.ETF("./database/000651.csv")
+grid_strategy = st.GridStrategy1(2000, 1.00, 0.05, 0.05)
 res_513030 = grid_strategy.executeStrategy(etf_513030)
 account = res_513030.getLatestAccount()
 max_investment = res_513030.getMaxInvestment()

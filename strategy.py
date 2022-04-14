@@ -4,7 +4,7 @@ import FileIO as fio
 import datatypes as dt
 
 #网格交易策略：使用高点的90%,85%,75%。。。。来买入，当达到任何买入价格的 1.05倍以上则卖出
-class GridStrategy:
+class GridStrategy1:
   #strategy constant for each instance
   __danger_thredhold = -1
   __const_base = -1
