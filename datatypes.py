@@ -139,5 +139,73 @@ class StrategyResult:
         buy_history.append(tranc[1], tranc[2])
   
 
+#class to descripe one transaction
+class Transaction:
+  #init function
+  def __init__(self) -> None:
+    self.investment_id = '000000'
+    self.t_type = 'N'        
+    self.t_date = 19901201   
+    self.t_price = 0.0       
+    self.t_share = 0.0  
+  def __init__(self, investment_id, t_type, t_date, t_price, t_share) -> None:
+    self.investment_id = investment_id    #投资品种
+    self.t_type = t_type        #transaction type, B, S, N for buy, sell, undefine
+    self.t_date = t_date        #transaction date
+    self.t_price = t_price      #trade price of the transaction
+    self.t_share = t_share      #trade shares of the transaction
+  #set functions
+  def set_date(self, t_date):
+    self.t_date = t_date
+  def set_type(self, t_type):
+    self.t_type = t_type
+  def set_price(self, t_price):
+    self.t_price = t_price
+  def set_share(self, t_share):
+    self.t_share = t_share
+  #get functions
+  def get_date(self):
+    return self.t_date
+  def get_type(self):
+    return self.t_type
+  def get_price(self):
+    return self.t_price
+  def get_share(self):
+    return self.t_share
   
+#一个投资实例由交易品种，交易策略，交易历史构成
+#是在一个给定品种，给定区间上运行给定策略的结果
+class InvestmentCase:
+  def __init__(self):
+    self.investment_id = '000000'
+    self.investment_strategy = None
+    self.transaction_history = []
+  def __init__(self, invest_id, invest_strategy):
+    self.investment_id = invest_id
+    self.investment_strategy = invest_strategy
+    self.transaction_history = []
+  def __init__(self, invest_id, invest_strategy, trans_history):
+    self.investment_id = invest_id
+    self.investment_strategy = invest_strategy
+    self.transaction_history = trans_history
+  #set methods
+  def setInvestId(self, invest_id):
+    self.investment_id = invest_id
+  def setInvestStrategy(self, invest_strategy):
+    self.investment_strategy = invest_strategy
+  def setTransHistory(self, trans_history):
+    self.transaction_history = trans_history
+   
+#投资账户由不同的投资实例组成
+class InvestmentAccount:
+  def __init__(self) -> None:
+    self.investment_case = []      #投资品种实例列表
   
+  #add new investment case
+  def addInvestment(self, invest_case):
+    self.investment_case.append(invest_case)
+  #clear an investment case
+  def clearInvestment(self, invest_id):
+    for invest_case in self.investment_case:
+      if invest_id == invest_id.getID():
+        self.investment_case.remove(invest_case)
