@@ -1,3 +1,6 @@
+import re
+
+from numpy import average
 import FileIO as fio
 """ class DayData:
   def close_price() """
@@ -188,16 +191,22 @@ class Transaction:
   #init function
   def __init__(self) -> None:
     self.investment_id = '000000'
-    self.t_type :str= 'N'        
+    self.t_type:str = 'N'        
     self.t_date = 19901201   
-    self.t_price :float= 0.0       
-    self.t_share :float= 0.0  
-  def __init__(self, investment_id:str, t_type:str, t_date:str, t_price:float, t_share:float) -> None:
+    self.t_price:float = 0.0       
+    self.t_share:int = 0
+    #value: 0 or 1
+    #for the buy transaction, 0: the corresponding sell operation to be executed
+    #1: the corresponding sell operation has been executed.
+    #for the sell operation, t_state = 1
+    self.t_state:int = 0     
+  def __init__(self, investment_id:str, t_type:str, t_date:str, t_price:float, t_share:int, t_state:int) -> None:
     self.investment_id = investment_id    #投资品种
-    self.t_type :str= t_type        #transaction type, B, S, N for buy, sell, undefine
-    self.t_date = t_date        #transaction date
-    self.t_price :float= t_price      #trade price of the transaction
-    self.t_share :float= t_share      #trade shares of the transaction
+    self.t_type:str = t_type              #transaction type, B, S, N for buy, sell, undefine
+    self.t_date = t_date                  #transaction date
+    self.t_price:float = t_price          #trade price of the transaction
+    self.t_share:int = t_share          #trade shares of the transaction
+    self.t_state:int = 0
   #set functions
   def set_date(self, t_date):
     self.t_date = t_date
@@ -207,6 +216,8 @@ class Transaction:
     self.t_price = t_price
   def set_share(self, t_share):
     self.t_share = t_share
+  def set_state(self, state:int):
+    self.t_state = state
   #get functions
   def get_date(self):
     return self.t_date
@@ -216,13 +227,15 @@ class Transaction:
     return self.t_price
   def get_share(self):
     return self.t_share
+  def get_state(self):
+    return self.t_state
   def isBuy(self):
     return self.t_type == 'B'
   def isSell(self):
     return self.t_type == 'S'
   
 #Transaction history
-class TransactionHistory:
+class TransactionRecords:
   def __init__(self):
     self.history: list[Transaction] = []
   def __init__(self, trans_history: list[Transaction]):
@@ -257,6 +270,18 @@ class TransactionHistory:
       if trans.isSell():
         sells.append(trans)
     return sells
+  #return the t_state=0 buy transaction with lowest cost(buy price)
+  def getLowestCostBuy(self) -> int:
+    object_index:int = -1
+    iter_index:int = 0
+    lowest_cost:float = 10000000.0
+    for trans in self.history:
+      if trans.isBuy():
+        if trans.get_state() == 0:
+          if trans.get_price() < lowest_cost:
+            lowest_cost = trans.get_price()
+            object_index = iter_index
+      iter_index += 1
   #return interval transactions
   #todo
     
@@ -298,3 +323,40 @@ class InvestmentAccount:
     for invest_case in self.investment_case:
       if invest_id == invest_id.getID():
         self.investment_case.remove(invest_case)
+
+class TransRecordsAnalysis:
+  def __init__(self):
+    self.records:TransactionRecords = []
+  def __init__(self, records:TransactionRecords):
+    self.records = records
+  #return the profit
+  def reportProfit(self, current_price:float) -> float:
+    buys:TransactionRecords = self.records.getAllBuys()
+    sells:TransactionRecords = self.records.getAllSells()
+    total_shares:int = 0
+    average_cost:float = 0.0
+    for trans in buys:
+      total_investment = average_cost * total_shares + trans.get_price() * trans.get_share()
+      total_shares += trans.get_share()
+      average_cost = total_investment / total_shares
+    for trans in sells:
+      total_investment = average_cost * total_shares - trans.get_price() * trans.get_shares()
+      total_shares -= trans.get_share()
+      average_cost = total_investment / total_shares
+    profit = (current_price - average_cost) * total_shares
+    return profit
+  #return the max investment
+  def reportMaxInvestment(self) -> float:
+    max_investment:float = 0.0
+    current_investment:float = 0.0
+    for trans in self.records:
+      if trans.isBuy():
+        current_investment += trans.get_price() * trans.get_share()
+        if max_investment < current_investment:
+          max_investment = current_investment
+      else:
+        current_investment -= trans.get_price() * trans.get_share()
+    return max_investment
+  #return the  profit rate
+  def reportProfitRate(self) -> float:
+    pass  #todo

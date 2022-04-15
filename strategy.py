@@ -68,8 +68,8 @@ class GridStrategy1:
 #leave profit
 #return a transaction history
 class GridStrategy2:
-  def execute(self, capital_per_trans:float, etf: dt.ETFObject) -> dt.TransactionHistory:
-    history:dt.TransactionHistory = []
+  def execute(self, capital_per_trans:float, etf: dt.ETFObject) -> dt.TransactionRecords:
+    history:dt.TransactionRecords = []
     high_price = float(etf[0].close_price)    #set the price of the first day as initial value
     PRICE_DELTA = high_price * 0.5
     CAPITAL_PER_TRANS = capital_per_trans
@@ -87,11 +87,18 @@ class GridStrategy2:
             grid_level += 1
         #sell
         elif  day_data.close_price > sell_price:
-            sell_shares = 0#todo
-            trans:dt.Transaction = dt.Transaction(etf.id, 'S', day_data.date, sell_price, sell_shares)
+            to_sell:int = history.getLowestCostBuy()
+            if to_sell == -1: #all the buys have been finished, return the history
+                return history
+            buy_shares = history[to_sell].get_share()
+            sell_shares = int(buy_shares * (PRICE_DELTA / history[to_sell].get_price()))
+            sell_shares = int(sell_shares / 100) * 100
+            trans:dt.Transaction = dt.Transaction(etf.id, 'S', day_data.date, sell_price, sell_shares, 1)
             history.add(trans)
+            history[to_sell].set_state(1)               #change the state of the buy to finished state
             grid_level -= 1
         #update high price
+        #note that under this condition, all the buys must have been finished
         if day_data.close_price > high_price:
             high_price = day_data.close_price
     return history
