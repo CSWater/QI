@@ -1,3 +1,4 @@
+import csv
 import pandas as pd
 import numpy as np
 import os
@@ -22,6 +23,7 @@ def readFile(filename):
     # trade_volume, rise_rate
     return nums[:, 0], nums[:, 1], nums[0, 2], nums[0, 3], \
       nums[:, 4], nums[:, 5], nums[:, 6]
+
 
 
 #format the download raw file to standard file

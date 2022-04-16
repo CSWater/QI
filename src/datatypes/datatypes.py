@@ -1,7 +1,8 @@
+import csv
 import re
 
 from numpy import average
-import FileIO as fio
+import src.commons.FileIO as fio
 """ class DayData:
   def close_price() """
 class ObjectDayData:
@@ -31,6 +32,9 @@ class ETFObject:
   def __init__(self, id:str, etf:list[ObjectDayData]):
     self.id = id
     self.data :list[ObjectDayData]= etf
+  def __init__(self, id:str, filename:str):
+    self.id = id
+    
   def __getitem__(self, k):
     return self.data[k]
   def __setitem__(self, k, v):
@@ -44,7 +48,16 @@ class ETFObject:
       return ret
     else:
       raise StopIteration 
-
+  #日期':'date','收盘':'close','开盘':'open','高':"high",'低':"low",'交易量':"volumn",'涨跌幅':'rise_rate'
+  def loadETFFromFile(self, filename:str):
+    if len(self.data) > 0:
+      print("Not none ETFobject!")
+      return
+    with open(filename, newline='') as ETFdata:
+      reader = csv.DictReader(ETFdata)
+      for row in reader:
+        self.data.append(ObjectDayData(row['date'], row['close'], row['open'], row['high'],\
+          row['low'], row['volumn'], row['rise_rate']))
       
 class ETF:
   __close_price = []

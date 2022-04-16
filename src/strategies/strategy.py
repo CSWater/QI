@@ -1,8 +1,8 @@
 import math as math
 import pandas as pd
 import numpy as np
-import FileIO as fio
-import datatypes as dt
+import src.commons.FileIO as fio
+import src.datatypes.datatypes as dt
 
 #网格交易策略：使用高点的90%,85%,75%。。。。来买入，当达到任何买入价格的 1.05倍以上则卖出
 class GridStrategy1:
