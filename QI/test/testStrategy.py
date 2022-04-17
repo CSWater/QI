@@ -6,7 +6,8 @@ import src.datatypes.datatypes as dt
 import src.commons.FileIO as fio
 
 def testGridStratagy1(datafile:str):
-    etf = dt.ETFObject
+    etf:dt.ETFObject = dt.ETFObject.loadETFFromFile(datafile)
+    
     
 # etf_513030 = dt.ETF("./database/000651.csv")
 # grid_strategy = st.GridStrategy1(2000, 1.00, 0.05, 0.05)

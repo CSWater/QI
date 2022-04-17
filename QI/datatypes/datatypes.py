@@ -2,7 +2,7 @@ import csv
 import re
 
 from numpy import average
-import src.commons.FileIO as fio
+import QI.commons.FileIO as fio
 """ class DayData:
   def close_price() """
 class ObjectDayData:
@@ -14,7 +14,7 @@ class ObjectDayData:
     self.trading_volume :float= 0
     self.rise_rate :float= 0
     self.date :str = 19901201
-  def __init__(self, cp:float, op:float, hp:float, lp:float, tv:float, rr:float, date:str):
+  def __init__(self, date:str, cp:float, op:float, hp:float, lp:float, tv:float, rr:float):
     self.close_price :float= cp
     self.open_price :float= op
     self.high_price :float= hp
@@ -22,6 +22,12 @@ class ObjectDayData:
     self.trading_volume :float= tv
     self.rise_rate :float= rr
     self.date :str= date
+  def printData(self):
+    print('{:<20}{:<20}{:<20}{:<20}{:<20}{:<20}{:<20}'\
+      .format('date','close','open','high','low','volumn','rise_rate'))
+    print('{:<20}{:<20}{:<20}{:<20}{:<20}{:<20}{:<20}'\
+      .format(self.date, self.close_price, self.open_price, self.high_price, self.low_price,\
+        self.trading_volume, self.rise_rate))
   
 class ETFObject:
   __index = 0
